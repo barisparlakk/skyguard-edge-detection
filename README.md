@@ -22,11 +22,11 @@ Skyguard is a compact, end-to-end perception project that takes a YOLOv8m detect
 
 ## Features
 
-- 🎯 YOLOv8m detector trained on the **VisDrone2019** aerial dataset
-- ⚡ **ONNX export** (opset 17, dynamic batch)
-- 🚀 **TensorRT** FP16 and INT8 engine builds
-- 📊 Reproducible **latency / throughput benchmarks** (with correct warmup + CUDA sync)
-- 📝 Documented methodology and results table
+-  YOLOv8m detector trained on the **VisDrone2019** aerial dataset
+-  **ONNX export** (opset 17, dynamic batch)
+-  **TensorRT** FP16 and INT8 engine builds
+-  Reproducible **latency / throughput benchmarks** (with correct warmup + CUDA sync)
+-  Documented methodology and results table
 
 ## Repo structure
 
