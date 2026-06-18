@@ -1,0 +1,14 @@
+# Training, validation, and model export CLI/API for YOLOv8.
+ultralytics
+
+# ONNX model format, graph loading, and model validation.
+onnx
+
+# CUDA-enabled ONNX inference runtime used for the ONNX benchmark.
+onnxruntime-gpu
+
+# Array handling and benchmark statistics.
+numpy
+
+# Reads image dimensions during VisDrone-to-YOLO annotation conversion.
+Pillow

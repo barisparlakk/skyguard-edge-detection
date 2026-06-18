@@ -1,0 +1,26 @@
+# VisDrone images, labels, and local dataset metadata are large/local artifacts.
+data/
+
+# Ultralytics training logs and checkpoints are generated outputs.
+runs/
+
+# Model checkpoints can be large and are reproducible from training.
+*.pt
+
+# Exported deployment artifacts are generated and environment-specific.
+export/*.onnx
+export/*.engine
+
+# Python bytecode and interpreter caches.
+__pycache__/
+*.py[cod]
+
+# Common local/build artifacts.
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+build/
+dist/
+*.egg-info/
+.venv/
+
