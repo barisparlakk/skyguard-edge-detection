@@ -1,0 +1,17 @@
+# VisDrone2019-DET configuration for Ultralytics YOLO.
+# Paths are relative to this file, keeping the configuration portable.
+train: data/visdrone/images/train
+val: data/visdrone/images/val
+
+# IDs must match scripts/prepare_visdrone.py exactly.
+names:
+  0: pedestrian
+  1: people
+  2: bicycle
+  3: car
+  4: van
+  5: truck
+  6: tricycle
+  7: awning-tricycle
+  8: bus
+  9: motor
