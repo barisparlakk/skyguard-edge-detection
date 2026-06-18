@@ -1,23 +1,16 @@
-# Skyguard — Aerial Object Detection on the Edge 🚁
+# Skyguard — Aerial Object Detection on the Edge 
 
 > Real-time aerial/drone object detection (YOLOv8m) optimized for the edge — **ONNX → TensorRT (FP16/INT8)** on an NVIDIA L4, with documented latency & throughput benchmarks.
 > 
 
-python
+<img width="84" height="20" alt="image" src="https://github.com/user-attachments/assets/3a7ced36-b9cd-4617-89df-e563f6c9acd0" />
 
-python
+<img width="80" height="20" alt="image" src="https://github.com/user-attachments/assets/4970283f-f059-40fa-87e3-9042e43beba3" />
 
-pytorch
+<img width="130" height="20" alt="image" src="https://github.com/user-attachments/assets/5045e716-aa58-470e-bab6-d7623a88ccab" />
 
-pytorch
+<img width="78" height="20" alt="image" src="https://github.com/user-attachments/assets/6a1a5c34-4842-4333-9d35-72c7862c6431" />
 
-tensorrt
-
-tensorrt
-
-license
-
-license
 
 ---
 
