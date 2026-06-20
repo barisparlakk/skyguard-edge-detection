@@ -4,10 +4,13 @@
 from __future__ import annotations
 
 import argparse
+import functools
+import inspect
 import shutil
 from pathlib import Path
 
 import onnx
+import torch
 from ultralytics import YOLO
 
 
@@ -70,6 +73,27 @@ def validate_export(path: Path) -> onnx.ModelProto:
     return graph
 
 
+def apply_torch_onnx_compatibility() -> bool:
+    """Remove only unsupported ONNX kwargs on the pinned NGC PyTorch build.
+
+    Ultralytics 8.4 passes ``dynamo=False`` to ``torch.onnx.export``. NVIDIA's
+    PyTorch 2.4 build in NGC 24.05 predates that keyword, although its legacy
+    ONNX exporter is otherwise compatible with the requested operation.
+    """
+    if "dynamo" in inspect.signature(torch.onnx.export).parameters:
+        return False
+
+    original_export = torch.onnx.export
+
+    @functools.wraps(original_export)
+    def compatible_export(*args, **kwargs):
+        kwargs.pop("dynamo", None)
+        return original_export(*args, **kwargs)
+
+    torch.onnx.export = compatible_export
+    return True
+
+
 def main() -> None:
     args = parse_args()
     model_path = args.model.resolve()
@@ -81,6 +105,9 @@ def main() -> None:
         raise FileExistsError(f"Refusing to overwrite existing export: {output_path}")
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    if apply_torch_onnx_compatibility():
+        print("Applied NGC PyTorch 2.4 ONNX compatibility shim")
 
     # Export raw FP32 predictions without NMS. Post-processing must remain the
     # same across PyTorch, ONNX Runtime, and TensorRT benchmarks.
