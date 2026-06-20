@@ -84,8 +84,15 @@ def main() -> None:
         )
     if not np.isfinite(torch_output).all() or not np.isfinite(onnx_output).all():
         raise ValueError("A backend produced NaN or infinite output values")
+    if torch_output.shape[1] <= 4:
+        raise ValueError(f"Expected box and class channels, got {torch_output.shape}")
 
     absolute_error = np.abs(torch_output - onnx_output)
+    # YOLO detection output stores four pixel-scale box channels first, followed
+    # by probability-scale class channels. Report them separately so a larger
+    # box-coordinate difference cannot hide a problematic class-score difference.
+    box_error = absolute_error[:, :4, :]
+    class_error = absolute_error[:, 4:, :]
     close = np.allclose(
         torch_output, onnx_output, atol=args.atol, rtol=args.rtol
     )
@@ -94,6 +101,10 @@ def main() -> None:
     print(f"Output shape: {torch_output.shape}")
     print(f"Maximum absolute error: {absolute_error.max():.8f}")
     print(f"Mean absolute error: {absolute_error.mean():.8f}")
+    print(f"Box maximum error (pixels): {box_error.max():.8f}")
+    print(f"Box mean error (pixels): {box_error.mean():.8f}")
+    print(f"Class-score maximum error: {class_error.max():.8f}")
+    print(f"Class-score mean error: {class_error.mean():.8f}")
     print(f"Tolerance: atol={args.atol}, rtol={args.rtol}")
     if not close:
         raise AssertionError("PyTorch and ONNX outputs exceed parity tolerance")
