@@ -7,8 +7,11 @@ onnx
 # CUDA-enabled ONNX inference runtime used for the ONNX benchmark.
 onnxruntime-gpu
 
-# Array handling and benchmark statistics.
-numpy
+# NGC 24.05 packages (RAPIDS, CuPy, Numba) require NumPy 1.x.
+numpy==1.26.4
+
+# Newer OpenCV wheels require NumPy 2.x, which conflicts with NGC 24.05.
+opencv-python==4.10.0.84
 
 # Reads image dimensions during VisDrone-to-YOLO annotation conversion.
 Pillow
