@@ -3,8 +3,10 @@
 
 set -euo pipefail
 
-# Run from the repository root so visdrone.yaml resolves its relative paths.
-cd "$(dirname "${BASH_SOURCE[0]}")/.."
+# Resolve an absolute repository path so Ultralytics cannot prepend its global
+# runs directory to our relative project path.
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "${repo_root}"
 
 # Fail early with a useful message instead of waiting for Ultralytics to scan.
 for split in train val; do
@@ -15,7 +17,7 @@ for split in train val; do
 done
 
 # Keep the baseline destination stable and avoid silently creating/overwriting a run.
-run_dir="runs/detect/baseline_yolov8m"
+run_dir="${repo_root}/runs/detect/baseline_yolov8m"
 if [[ -e "${run_dir}" ]]; then
   echo "${run_dir} already exists; move it or resume it explicitly before retrying." >&2
   exit 1
@@ -29,5 +31,5 @@ yolo detect train \
   batch=16 \
   device=0 \
   workers=8 \
-  project=runs/detect \
+  project="${repo_root}/runs/detect" \
   name=baseline_yolov8m
