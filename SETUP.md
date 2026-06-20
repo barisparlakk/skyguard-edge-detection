@@ -47,6 +47,9 @@ provides it while preserving CUDA and TensorRT compatibility.
 Install the project-level Python packages:
 
 ```bash
+# NGC 24.05 includes an `opencv` package that owns the same `cv2` directory as
+# Ultralytics' `opencv-python` dependency. Remove it to avoid mixed binaries.
+python -m pip uninstall -y opencv
 python -m pip install -r requirements.txt
 ```
 
