@@ -23,8 +23,13 @@ def parse_args() -> argparse.Namespace:
 
 
 def pytorch_predict(checkpoint: Path, input_array: np.ndarray) -> np.ndarray:
-    """Run the unfused Ultralytics checkpoint on CUDA and return raw predictions."""
-    model = YOLO(str(checkpoint)).model.eval().cuda()
+    """Run the fused Ultralytics checkpoint on CUDA and return raw predictions."""
+    model = YOLO(str(checkpoint)).model
+
+    # Ultralytics fuses Conv and BatchNorm layers during ONNX export. Apply the
+    # same inference optimization here so both backends execute equivalent graphs.
+    model.fuse(verbose=False)
+    model = model.eval().cuda()
     tensor = torch.from_numpy(input_array).cuda()
 
     with torch.inference_mode():
