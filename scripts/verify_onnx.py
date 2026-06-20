@@ -17,7 +17,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--checkpoint", type=Path, required=True)
     parser.add_argument("--onnx", type=Path, required=True)
     parser.add_argument("--imgsz", type=int, default=640)
-    parser.add_argument("--atol", type=float, default=1e-3)
+    parser.add_argument("--box-atol-px", type=float, default=1.0)
+    parser.add_argument("--class-atol", type=float, default=1e-4)
     parser.add_argument("--rtol", type=float, default=1e-3)
     return parser.parse_args()
 
@@ -93,8 +94,17 @@ def main() -> None:
     # box-coordinate difference cannot hide a problematic class-score difference.
     box_error = absolute_error[:, :4, :]
     class_error = absolute_error[:, 4:, :]
-    close = np.allclose(
-        torch_output, onnx_output, atol=args.atol, rtol=args.rtol
+    boxes_close = np.allclose(
+        torch_output[:, :4, :],
+        onnx_output[:, :4, :],
+        atol=args.box_atol_px,
+        rtol=args.rtol,
+    )
+    classes_close = np.allclose(
+        torch_output[:, 4:, :],
+        onnx_output[:, 4:, :],
+        atol=args.class_atol,
+        rtol=args.rtol,
     )
 
     print(f"Providers: {providers}")
@@ -105,9 +115,15 @@ def main() -> None:
     print(f"Box mean error (pixels): {box_error.mean():.8f}")
     print(f"Class-score maximum error: {class_error.max():.8f}")
     print(f"Class-score mean error: {class_error.mean():.8f}")
-    print(f"Tolerance: atol={args.atol}, rtol={args.rtol}")
-    if not close:
-        raise AssertionError("PyTorch and ONNX outputs exceed parity tolerance")
+    print(
+        "Tolerance: "
+        f"box_atol_px={args.box_atol_px}, "
+        f"class_atol={args.class_atol}, rtol={args.rtol}"
+    )
+    if not boxes_close:
+        raise AssertionError("Box coordinates exceed parity tolerance")
+    if not classes_close:
+        raise AssertionError("Class scores exceed parity tolerance")
     print("Numerical parity: PASS")
 
 
